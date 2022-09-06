@@ -44,6 +44,10 @@ func _physics_process(delta : float) -> void:
 
 @rpc(call_remote, unreliable_ordered, authority, 1)
 func network_update(_position : Vector3, _velocity : Vector3) -> void:
+	assert(!is_multiplayer_authority(), "network_update() called on authority client")
+#	if is_multiplayer_authority():
+#		return
+	print(_position)
 	position = _position
 	velocity = _velocity
 #call_local call_remote
