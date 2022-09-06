@@ -1,8 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://dadofkphd36ic"]
+[gd_scene load_steps=4 format=3 uid="uid://dadofkphd36ic"]
 
-[ext_resource type="Script" path="res://ControllerLeft.gd" id="1_4i0jm"]
 [ext_resource type="Script" path="res://XRPuppet.gd" id="1_ulnsf"]
-[ext_resource type="Script" path="res://ControllerRight.gd" id="2_srrst"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1dnwn"]
 transparency = 2
@@ -43,15 +41,11 @@ radius = 0.0112186
 material = SubResource("StandardMaterial3D_5s5eh")
 
 [node name="LeftHand" type="Node3D" parent="."]
-script = ExtResource("1_4i0jm")
-tracker_name = &"/user/hand/left"
 
 [node name="CSGBox3D" type="CSGBox3D" parent="LeftHand"]
 size = Vector3(0.05, 0.05, 0.1)
 
 [node name="RightHand" type="Node3D" parent="."]
-script = ExtResource("2_srrst")
-tracker_name = &"/user/hand/right"
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="RightHand"]
 size = Vector3(0.05, 0.05, 0.1)

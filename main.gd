@@ -9,6 +9,7 @@ var puppet = preload("res://XRPuppet.tscn")
 func _ready() -> void:
 	get_tree().get_multiplayer().peer_connected.connect(on_peer_connected)
 	get_tree().get_multiplayer().peer_disconnected.connect(on_peer_disconnected)
+	get_tree().get_multiplayer().connected_to_server.connect(on_connected_to_server)
 
 func on_peer_connected(id : int) -> void:
 	#add character
@@ -24,6 +25,9 @@ func on_peer_disconnected(id : int) -> void:
 	#remove reference
 	player_refs.erase(id)
 
+func on_connected_to_server() -> void:
+	create_character(get_tree().get_multiplayer().get_unique_id())
+
 func create_character(id : int) -> void:
 	#create CharacterBody3D instance
 	var body_instance : CharacterBody3D = kinematic_body.instantiate()
@@ -31,6 +35,7 @@ func create_character(id : int) -> void:
 	
 	#create XRPlayer
 	var instance : XROrigin3D = character.instantiate()
+	instance.name = str(id)
 	#save reference to player instance
 	player_refs[id] = instance
 	body_instance.add_child(instance)
@@ -46,6 +51,7 @@ func create_puppet(id : int) -> void:
 	
 	#create XRPlayer
 	var instance : Node3D = puppet.instantiate()
+	instance.name = str(id)
 	#save reference to player instance
 	player_refs[id] = instance
 	body_instance.add_child(instance)
