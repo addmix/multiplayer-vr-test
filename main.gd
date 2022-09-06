@@ -26,7 +26,8 @@ func on_peer_disconnected(id : int) -> void:
 	player_refs.erase(id)
 
 func on_connected_to_server() -> void:
-	create_character(get_tree().get_multiplayer().get_unique_id())
+	if !get_tree().get_multiplayer().is_server():
+		create_character(get_tree().get_multiplayer().get_unique_id())
 
 func create_character(id : int) -> void:
 	#create CharacterBody3D instance
