@@ -44,19 +44,19 @@ func create_client(address: String, port: int, channel_count: int = 0, in_bandwi
 	get_tree().get_multiplayer().multiplayer_peer = peer
 
 func on_connected_to_server() -> void:
-	print("Successfully connected to server with id: %s" % get_tree().get_multiplayer().get_unique_id())
+	print("Client: Successfully connected to server with ID: %s" % get_tree().get_multiplayer().get_unique_id())
 
 func on_connection_failed() -> void:
-	print("Connection to server failed.")
+	print("Client: Connection to server failed.")
 
 func on_peer_connected(id : int) -> void:
-	print("Peer %s connected." % id)
+	print("Server: Peer %s connected." % id)
 
 func on_peer_disconnected(id : int) -> void:
-	print("Peer %s disconnected." % id)
+	print("Server: Peer %s disconnected." % id)
 
 func on_server_disconnected() -> void:
-	print("Server disconected.")
+	print("Client: Server disconected.")
 
 
 #config

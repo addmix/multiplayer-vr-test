@@ -12,22 +12,41 @@ func _ready() -> void:
 	get_tree().get_multiplayer().connected_to_server.connect(on_connected_to_server)
 
 func on_peer_connected(id : int) -> void:
-	#add character
+	#only handle peer connections on server
+	if !get_tree().get_multiplayer().is_server():
+		return
 	
+	#tell all clients that a new peer has connected
+	receive_peer_connected.rpc(id)
+	#send newly connected client info about all clients presently on the server
+	receive_players_on_server.rpc_id(id, get_tree().get_multiplayer().get_peers())
+
+func on_peer_disconnected(id : int) -> void:
+	#delete peer's character
+	player_refs[id].queue_free()
+	#remove reference to that player
+	player_refs.erase(id)
+
+func on_connected_to_server() -> void:
+	pass
+
+@rpc(call_local, authority, reliable)
+func receive_players_on_server(peers : PackedInt32Array) -> void:
+	print("Received peer IDs conencted to server: ", peers)
+	
+	#create a puppet for every other player already on the server
+	for peer in peers:
+		create_puppet(peer)
+
+@rpc(call_local, authority, reliable)
+func receive_peer_connected(id : int) -> void:
+	print("Client: Peer connected with ID: ", id)
+	
+	#if self
 	if id == get_tree().get_multiplayer().get_unique_id():
 		create_character(id)
 	else:
 		create_puppet(id)
-
-func on_peer_disconnected(id : int) -> void:
-	#remove character
-	player_refs[id].queue_free()
-	#remove reference
-	player_refs.erase(id)
-
-func on_connected_to_server() -> void:
-	if !get_tree().get_multiplayer().is_server():
-		create_character(get_tree().get_multiplayer().get_unique_id())
 
 func create_character(id : int) -> void:
 	#create CharacterBody3D instance
