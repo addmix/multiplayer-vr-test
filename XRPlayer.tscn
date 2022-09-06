@@ -1,0 +1,72 @@
+[gd_scene load_steps=8 format=3 uid="uid://8wh3p3rhqhoc"]
+
+[ext_resource type="Script" path="res://ControllerLeft.gd" id="1_5jhu5"]
+[ext_resource type="Script" path="res://XRPlayer.gd" id="1_kuklh"]
+[ext_resource type="PackedScene" uid="uid://c8rneh2x0n240" path="res://classes/xr_controller_function_interact/xr_controller_function_grab/xr_controller_function_grab.tscn" id="2_llc4j"]
+[ext_resource type="PackedScene" uid="uid://sqvn74ejr6uy" path="res://classes/xr_controller_function_interact/xr_controller_function_press.tscn" id="3_jv51j"]
+[ext_resource type="Script" path="res://ControllerRight.gd" id="5_h4bbg"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uecxx"]
+transparency = 2
+alpha_scissor_threshold = 0.413
+alpha_antialiasing_mode = 0
+albedo_color = Color(0.709804, 0.623529, 0.533333, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kf3pf"]
+albedo_color = Color(0.00784314, 0.00784314, 0.00784314, 1)
+
+[node name="XRPlayer" type="XROrigin3D"]
+script = ExtResource("1_kuklh")
+
+[node name="Head" type="XRCamera3D" parent="."]
+fov = 121.434
+far = 10000.0
+
+[node name="CsgSphere3d" type="CSGSphere3D" parent="Head"]
+visible = false
+radius = 0.113575
+radial_segments = 24
+rings = 12
+material = SubResource("StandardMaterial3D_uecxx")
+
+[node name="CsgSphere3d3" type="CSGSphere3D" parent="Head/CsgSphere3d"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.053, 0.028, -0.0899882)
+radius = 0.0298998
+
+[node name="CsgSphere3d4" type="CSGSphere3D" parent="Head/CsgSphere3d/CsgSphere3d3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0246735)
+radius = 0.0112186
+material = SubResource("StandardMaterial3D_kf3pf")
+
+[node name="CsgSphere3d4" type="CSGSphere3D" parent="Head/CsgSphere3d"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.053, 0.028, -0.0898099)
+radius = 0.0298998
+
+[node name="CsgSphere3d4" type="CSGSphere3D" parent="Head/CsgSphere3d/CsgSphere3d4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0246735)
+radius = 0.0112186
+material = SubResource("StandardMaterial3D_kf3pf")
+
+[node name="LeftHand" type="XRController3D" parent="."]
+tracker = &"left_hand"
+script = ExtResource("1_5jhu5")
+tracker_name = &"/user/hand/left"
+
+[node name="CSGBox3D" type="CSGBox3D" parent="LeftHand"]
+size = Vector3(0.05, 0.05, 0.1)
+
+[node name="FunctionGrab" parent="LeftHand" instance=ExtResource("2_llc4j")]
+
+[node name="FunctionPress" parent="LeftHand" instance=ExtResource("3_jv51j")]
+
+[node name="RightHand" type="XRController3D" parent="."]
+tracker = &"right_hand"
+script = ExtResource("5_h4bbg")
+tracker_name = &"/user/hand/right"
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="RightHand"]
+size = Vector3(0.05, 0.05, 0.1)
+
+[node name="FunctionGrab" parent="RightHand" instance=ExtResource("2_llc4j")]
+
+[node name="FunctionPress" parent="RightHand" instance=ExtResource("3_jv51j")]

@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://sqvn74ejr6uy"]
+
+[ext_resource type="Script" path="res://classes/xr_controller_function_interact/xr_controller_function_grab/xr_controller_function_grab.gd" id="1_ut17b"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ltvrs"]
+radius = 0.01
+height = 0.1
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_htj1w"]
+radius = 0.009
+height = 0.102
+radial_segments = 16
+rings = 4
+
+[node name="FunctionPress" type="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 0.970498, -0.241109, 0, 0.241109, 0.970498, 0, -0.0978572, -0.0487378)
+monitorable = false
+script = ExtResource("1_ut17b")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0331486, 0.000639781)
+shape = SubResource("CapsuleShape3D_ltvrs")
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="CollisionShape3D"]
+mesh = SubResource("CapsuleMesh_htj1w")
+
+[connection signal="area_entered" from="." to="." method="_on_function_grab_area_entered"]
+[connection signal="area_exited" from="." to="." method="_on_function_grab_area_exited"]

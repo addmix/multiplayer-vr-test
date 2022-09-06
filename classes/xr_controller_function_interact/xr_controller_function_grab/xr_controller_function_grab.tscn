@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8rneh2x0n240"]
+
+[ext_resource type="Script" path="res://classes/xr_controller_function_interact/xr_controller_function_grab/xr_controller_function_grab.gd" id="1_dpfrp"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_taexn"]
+radius = 0.05
+
+[node name="FunctionGrab" type="Area3D"]
+monitorable = false
+script = ExtResource("1_dpfrp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_taexn")
+
+[connection signal="area_entered" from="." to="." method="_on_function_grab_area_entered"]
+[connection signal="area_exited" from="." to="." method="_on_function_grab_area_exited"]

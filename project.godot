@@ -1,0 +1,66 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+_global_script_classes=[{
+"base": "XRInteractableValue3D",
+"class": &"Slider3D",
+"language": &"GDScript",
+"path": "res://classes/xr_interactable/xr_interactable_value/slider/xr_interactable_slider_3d.gd"
+}, {
+"base": "Area3D",
+"class": &"XRControllerFunctionInteract",
+"language": &"GDScript",
+"path": "res://classes/xr_controller_function_interact/xr_controller_function_interact.gd"
+}, {
+"base": "Area3D",
+"class": &"XRInteractable3D",
+"language": &"GDScript",
+"path": "res://classes/xr_interactable/xr_interactable_3d.gd"
+}, {
+"base": "XRInteractableValue3D",
+"class": &"XRInteractableButton3D",
+"language": &"GDScript",
+"path": "res://classes/xr_interactable/xr_interactable_value/button/xr_interactable_button_3d.gd"
+}, {
+"base": "XRInteractableValue3D",
+"class": &"XRInteractableJoystick3D",
+"language": &"GDScript",
+"path": "res://classes/xr_interactable/xr_interactable_value/stick/xr_interactable_joystick_3d.gd"
+}, {
+"base": "XRInteractable3D",
+"class": &"XRInteractableValue3D",
+"language": &"GDScript",
+"path": "res://classes/xr_interactable/xr_interactable_value/xr_interactable_value_3d.gd"
+}]
+_global_script_class_icons={
+"Slider3D": "",
+"XRControllerFunctionInteract": "",
+"XRInteractable3D": "",
+"XRInteractableButton3D": "",
+"XRInteractableJoystick3D": "",
+"XRInteractableValue3D": ""
+}
+
+[application]
+
+config/name="Multiplayer Vr Test"
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.0", "Vulkan Clustered")
+config/icon="res://icon.png"
+
+[autoload]
+
+XRInterfaceSingleton="*res://singletons/xr_interface_singleton.gd"
+MultiplayerSingleton="*res://singletons/multiplayer_singleton.gd"
+
+[xr]
+
+openxr/enabled=true
+shaders/enabled=true
