@@ -70,7 +70,7 @@ func has_config() -> bool:
 func create_config() -> void:
 	var config := ConfigFile.new()
 	
-	config.set_value("multiplayer", "host", false)
+	config.set_value("multiplayer", "host", true)
 	config.set_value("multiplayer", "ip", "localhost")
 	config.set_value("multiplayer", "port", 1738)
 	
@@ -81,7 +81,9 @@ func load_config() -> Dictionary:
 	config.load(OS.get_executable_path().get_base_dir() + "/config.ini")
 	
 	return {
-		"host": config.get_value("multiplayer", "host"),
-		"ip": config.get_value("multiplayer", "ip"),
-		"port": config.get_value("multiplayer", "port"),
+		"host": config.get_value("multiplayer", "host", true),
+		"ip": config.get_value("multiplayer", "ip", "localhost"),
+		"port": config.get_value("multiplayer", "port", 1738),
 	}
+	
+	config.save(OS.get_executable_path().get_base_dir() + "/config.ini")
