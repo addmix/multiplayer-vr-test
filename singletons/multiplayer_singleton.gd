@@ -28,7 +28,7 @@ func deferred() -> void:
 
 
 func create_server(port : int, max_clients: int = 32, max_channels: int = 0, in_bandwidth: int = 0, out_bandwidth: int = 0) -> void:
-	print("Creating server on port: %s" % port)
+	print("Server: Creating server on port: %s" % port)
 	peer = ENetMultiplayerPeer.new()
 	var error : int = peer.create_server(port, max_clients, max_channels, in_bandwidth, out_bandwidth)
 	get_tree().get_multiplayer().multiplayer_peer = peer
@@ -38,7 +38,7 @@ func create_server(port : int, max_clients: int = 32, max_channels: int = 0, in_
 	get_tree().get_multiplayer().peer_connected.emit(get_tree().get_multiplayer().get_unique_id())
 
 func create_client(address: String, port: int, channel_count: int = 0, in_bandwidth: int = 0, out_bandwidth: int = 0, local_port: int = 0) -> void:
-	print("Creating client on ip: %s and port: %s" % [address, port])
+	print("Client: Creating client on ip: %s and port: %s" % [address, port])
 	peer = ENetMultiplayerPeer.new()
 	var error : int = peer.create_client(address, port, channel_count, in_bandwidth, out_bandwidth, local_port)
 	get_tree().get_multiplayer().multiplayer_peer = peer

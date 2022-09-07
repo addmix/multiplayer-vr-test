@@ -22,17 +22,15 @@ func on_peer_connected(id : int) -> void:
 	receive_players_on_server.rpc_id(id, get_tree().get_multiplayer().get_peers())
 
 func on_peer_disconnected(id : int) -> void:
-	#delete peer's character
-	player_refs[id].queue_free()
-	#remove reference to that player
-	player_refs.erase(id)
+	#notify all connected clients of peer's disconnection
+	receiver_peer_disconnected.rpc(id)
 
 func on_connected_to_server() -> void:
 	pass
 
 @rpc(call_local, authority, reliable)
 func receive_players_on_server(peers : PackedInt32Array) -> void:
-	print("Received peer IDs conencted to server: ", peers)
+	print("Client: Received peer IDs connected to server: ", peers)
 	
 	#create a puppet for every other player already on the server
 	for peer in peers:
@@ -47,6 +45,13 @@ func receive_peer_connected(id : int) -> void:
 		create_character(id)
 	else:
 		create_puppet(id)
+
+@rpc(call_local, authority, reliable)
+func receiver_peer_disconnected(id : int) -> void:
+	#delete peer's character
+	player_refs[id].queue_free()
+	#remove reference to that player
+	player_refs.erase(id)
 
 func create_character(id : int) -> void:
 	#create CharacterBody3D instance
