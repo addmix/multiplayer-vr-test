@@ -60,6 +60,13 @@ config/icon="res://icon.png"
 XRInterfaceSingleton="*res://singletons/xr_interface_singleton.gd"
 MultiplayerSingleton="*res://singletons/multiplayer_singleton.gd"
 
+[layer_names]
+
+3d_physics/layer_1="World"
+3d_physics/layer_2="Players"
+3d_physics/layer_3="Objects"
+3d_physics/layer_4="Vehicles"
+
 [xr]
 
 openxr/enabled=true

@@ -25,6 +25,16 @@ func _process(delta : float) -> void:
 	input = Vector2(transformed_input.x, transformed_input.z)
 
 func _physics_process(delta : float) -> void:
+	
+	
+	#figure out how to do crouching, and changing the collision shape to accomodate
+	
+	
+	#when HMD moves on the XZ plane, move the XRPlayer or XRPuppet in the opposite direction, and move the physical character that same amount.
+	
+	
+	#when headset "rolls", do leaning?
+	
 	if not is_on_floor():
 			velocity.y -= gravity * delta
 	
