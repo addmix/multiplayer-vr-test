@@ -9,6 +9,7 @@ func _ready():
 	input_value_changed.connect(on_input_value_changed)
 
 func on_button_pressed(_name : String) -> void:
+	#move this to XRPlayer, fix controller flicker when snap turning
 	if _name == "by_button":
 		get_parent().rotation += Vector3(0, deg_to_rad(45.0), 0)
 

@@ -24,9 +24,14 @@ func _process(delta : float) -> void:
 		return
 	
 	var base_input : Vector2 = left_controller.get_axis(&"primary")
-	#try to normalize for movement speed and such
-	var headset_movement := (head.position + Player.position * Player.basis) / delta / SPEED * Vector3(1, 0, 1)
-	var transformed_input := (Vector3(base_input.x, 0, -base_input.y) + headset_movement).rotated(Vector3(0, 1, 0), head.global_transform.basis.get_euler().y)
+	
+	#translate the headset's movement into world-aligned movement vector
+	#go by inverse player basis to account for XROrigin rotation
+	var headset_movement := (head.position * Player.basis.inverse() * Vector3(1.0, 0.0, 1.0) + Player.position)
+	#normalize for movement speed
+	headset_movement = headset_movement / delta / SPEED * Vector3(1, 0, 1)
+	#do final rotation
+	var transformed_input := Vector3(base_input.x, 0, -base_input.y).rotated(Vector3(0, 1, 0), head.global_transform.basis.get_euler().y) + headset_movement
 	
 	#keep headset at player's center
 	Player.position = -Vector3(head.position.x, 0.0, head.position.z) * Player.basis.inverse()
