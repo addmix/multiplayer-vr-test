@@ -36,14 +36,14 @@ func _physics_process(delta : float) -> void:
 	#when headset "rolls", do leaning?
 	
 	#crouching, changing collision shape
-	print(capsule.shape.radius)
 	var height = max(head.position.y, 0.1) + capsule.shape.radius
 	capsule.shape.radius = 0.2
 	capsule.shape.height = max(height, 2.0 * capsule.shape.radius)
 	capsule.position.y = 0.5 * height
+	#prevent standing up when under an obstacle
 	
 	if not is_on_floor():
-			velocity.y -= gravity * delta
+		velocity.y -= gravity * delta
 	
 	#run physics on both authority and server
 	if is_multiplayer_authority() or get_tree().get_multiplayer().is_server():
@@ -52,6 +52,7 @@ func _physics_process(delta : float) -> void:
 			velocity.x = input.x * SPEED
 			velocity.z = input.y * SPEED
 			
+			#need a way to replicate jump inputs to server
 			if right_controller.is_button_pressed("ax_button"):
 				velocity.y = JUMP_VELOCITY
 	
