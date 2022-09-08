@@ -33,21 +33,14 @@ func _process(delta : float) -> void:
 	input = Vector2(transformed_input.x, transformed_input.z).limit_length()
 
 func _physics_process(delta : float) -> void:
-	
+	#when headset "rolls", do leaning?
 	
 	#crouching, changing collision shape
 	print(capsule.shape.radius)
 	var height = max(head.position.y, 0.1) + capsule.shape.radius
 	capsule.shape.radius = 0.2
-	capsule.shape.height = height
+	capsule.shape.height = max(height, 2.0 * capsule.shape.radius)
 	capsule.position.y = 0.5 * height
-	
-	
-	
-	#when HMD moves on the XZ plane, move the XRPlayer or XRPuppet in the opposite direction, and move the physical character that same amount.
-	
-	
-	#when headset "rolls", do leaning?
 	
 	if not is_on_floor():
 			velocity.y -= gravity * delta
