@@ -1,6 +1,7 @@
 extends CharacterBody3D
 
 var Player : Node3D
+@onready var capsule : CollisionShape3D = $CollisionShape3d
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -8,26 +9,39 @@ const JUMP_VELOCITY = 4.5
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
-var head : XRCamera3D
-var left_controller : XRController3D
-var right_controller : XRController3D
+var head : Node3D
+var left_controller : Node3D
+var right_controller : Node3D
 
 func _ready() -> void:
-	if is_multiplayer_authority():
-		head = Player.get_node("Head")
-		left_controller = Player.get_node("LeftHand")
-		right_controller = Player.get_node("RightHand")
+	head = Player.get_node("Head")
+	left_controller = Player.get_node("LeftHand")
+	right_controller = Player.get_node("RightHand")
 
 var input := Vector2.ZERO
 func _process(delta : float) -> void:
-	var base_input := left_controller.get_axis(&"primary")
-	var transformed_input := Vector3(base_input.x, 0, -base_input.y).rotated(Vector3(0, 1, 0), head.global_transform.basis.get_euler().y)
-	input = Vector2(transformed_input.x, transformed_input.z)
+	if !is_multiplayer_authority():
+		return
+	
+	var base_input : Vector2 = left_controller.get_axis(&"primary")
+	#try to normalize for movement speed and such
+	var headset_movement := (head.position + Player.position * Player.basis) / delta / SPEED * Vector3(1, 0, 1)
+	var transformed_input := (Vector3(base_input.x, 0, -base_input.y) + headset_movement).rotated(Vector3(0, 1, 0), head.global_transform.basis.get_euler().y)
+	
+	#keep headset at player's center
+	Player.position = -Vector3(head.position.x, 0.0, head.position.z) * Player.basis.inverse()
+	input = Vector2(transformed_input.x, transformed_input.z).limit_length()
 
 func _physics_process(delta : float) -> void:
 	
 	
-	#figure out how to do crouching, and changing the collision shape to accomodate
+	#crouching, changing collision shape
+	print(capsule.shape.radius)
+	var height = max(head.position.y, 0.1) + capsule.shape.radius
+	capsule.shape.radius = 0.2
+	capsule.shape.height = height
+	capsule.position.y = 0.5 * height
+	
 	
 	
 	#when HMD moves on the XZ plane, move the XRPlayer or XRPuppet in the opposite direction, and move the physical character that same amount.
@@ -70,7 +84,8 @@ func transmit_input_update(_input : Vector2) -> void:
 		push_error("Client Error: Unauthorized network input update from peer %s" % get_tree().get_multiplayer().get_remote_sender_id())
 		return
 	
-	input = _input
+	#prevent client from sending spoofed/replaced input value
+	input = _input.limit_length()
 
 #can only be called by server
 @rpc(call_remote, any_peer, unreliable_ordered, 2)
