@@ -38,6 +38,8 @@ func _process(delta : float) -> void:
 	input = Vector2(transformed_input.x, transformed_input.z).limit_length()
 
 func _physics_process(delta : float) -> void:
+	if get_tree().is_queued_for_deletion():
+		return
 	#when headset "rolls", do leaning?
 	
 	#crouching, changing collision shape
@@ -63,8 +65,8 @@ func _physics_process(delta : float) -> void:
 	if is_multiplayer_authority():
 		transmit_input_update.rpc_id(1, input)
 		
-		if right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click"):
-					velocity.y = JUMP_VELOCITY
+		if right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click") and is_on_floor():
+			velocity.y = JUMP_VELOCITY
 	
 	#only the server has authority to update player positions
 	if get_tree().get_multiplayer().is_server():
