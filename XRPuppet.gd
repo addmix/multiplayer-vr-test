@@ -10,3 +10,7 @@ func network_update(anchor_transform : Transform3D, camera_transform : Transform
 	Head.transform = camera_transform
 	LeftHand.transform = left_transform
 	RightHand.transform = right_transform
+
+func _exit_tree() -> void:
+	#delete physical character
+	pass

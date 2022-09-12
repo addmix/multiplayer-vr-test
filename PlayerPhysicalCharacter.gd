@@ -40,14 +40,16 @@ func _process(delta : float) -> void:
 func _physics_process(delta : float) -> void:
 	if get_tree().is_queued_for_deletion():
 		return
+	
 	#when headset "rolls", do leaning?
 	
-	#crouching, changing collision shape
-	var height = max(head.position.y, 0.1) + capsule.shape.radius
-	capsule.shape.radius = 0.2
-	capsule.shape.height = max(height, 2.0 * capsule.shape.radius)
-	capsule.position.y = 0.5 * height
-	#prevent standing up when under an obstacle
+	if head:
+		#crouching, changing collision shape
+		var height = max(head.position.y, 0.1) + capsule.shape.radius
+		capsule.shape.radius = 0.2
+		capsule.shape.height = max(height, 2.0 * capsule.shape.radius)
+		capsule.position.y = 0.5 * height
+		#prevent standing up when under an obstacle
 	
 	if not is_on_floor():
 		velocity.y -= gravity * delta
