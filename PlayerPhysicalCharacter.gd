@@ -58,7 +58,7 @@ func _physics_process(delta : float) -> void:
 			velocity.z = input.y * SPEED
 			
 			#need a way to replicate jump inputs to server
-			if right_controller:
+			if right_controller is XRController3D:
 				if right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click"):
 					velocity.y = JUMP_VELOCITY
 	
