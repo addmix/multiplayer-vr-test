@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://PlayerPhysicalCharacter.gd" id="1_3xyok"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jqaf0"]
+resource_local_to_scene = true
 radius = 0.2
 height = 1.8
 

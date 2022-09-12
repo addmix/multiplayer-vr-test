@@ -18,6 +18,8 @@ func _ready() -> void:
 	head = Player.get_node("Head")
 	left_controller = Player.get_node("LeftHand")
 	right_controller = Player.get_node("RightHand")
+	
+	head.tree_exiting.connect(on_player_deleted)
 
 var input := Vector2.ZERO
 func _process(delta : float) -> void:
@@ -42,13 +44,15 @@ func _physics_process(delta : float) -> void:
 	
 	#when headset "rolls", do leaning?
 	
-	if head:
-		#crouching, changing collision shape
-		var height = max(head.position.y, 0.1) + capsule.shape.radius
-		capsule.shape.radius = 0.2
-		capsule.shape.height = max(height, 2.0 * capsule.shape.radius)
-		capsule.position.y = 0.5 * height
-		#prevent standing up when under an obstacle
+	
+	
+	#visible collision debug option shows wrong shape?
+	#crouching, changing collision shape
+	var height = max(head.position.y, 0.1) + capsule.shape.radius
+	capsule.shape.radius = 0.2
+	capsule.shape.height = max(height, 2.0 * capsule.shape.radius)
+	capsule.position.y = 0.5 * height
+	#prevent standing up when under an obstacle
 	
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -98,3 +102,8 @@ func receive_network_update(_position : Vector3, _velocity : Vector3) -> void:
 #call_local call_remote
 #any_peer authority
 #reliable unreliable unreliable_ordered
+
+
+func on_player_deleted() -> void:
+	#for now, just delete physical player
+	queue_free()
