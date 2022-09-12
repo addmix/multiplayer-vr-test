@@ -65,6 +65,7 @@ func _physics_process(delta : float) -> void:
 	if is_multiplayer_authority():
 		transmit_input_update.rpc_id(1, input)
 		
+		
 		if right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click") and is_on_floor():
 			velocity.y = JUMP_VELOCITY
 	

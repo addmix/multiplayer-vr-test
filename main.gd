@@ -32,8 +32,9 @@ func on_connected_to_server() -> void:
 func receive_players_on_server(peers : PackedInt32Array) -> void:
 	print("Client: Received peer IDs connected to server: ", peers)
 	
-	#assume server is a player
-	create_puppet(1)
+	if !get_tree().get_multiplayer().is_server():
+		#assume server is a player
+		create_puppet(1)
 	
 	#create a puppet for every other player already on the server
 	for peer in peers:
