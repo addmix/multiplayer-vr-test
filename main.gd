@@ -38,6 +38,9 @@ func receive_players_on_server(peers : PackedInt32Array) -> void:
 	
 	#create a puppet for every other player already on the server
 	for peer in peers:
+		#prevent from adding a puppet for the local client
+		if peer == get_tree().get_multiplayer().get_unique_id():
+			continue
 		create_puppet(peer)
 
 @rpc(call_local, authority, reliable)
