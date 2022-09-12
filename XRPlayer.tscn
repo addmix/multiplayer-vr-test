@@ -19,8 +19,8 @@ albedo_color = Color(0.00784314, 0.00784314, 0.00784314, 1)
 script = ExtResource("1_kuklh")
 
 [node name="Head" type="XRCamera3D" parent="."]
-fov = 121.434
-far = 10000.0
+fov = 90.0
+far = 1000.0
 
 [node name="CsgSphere3d" type="CSGSphere3D" parent="Head"]
 visible = false

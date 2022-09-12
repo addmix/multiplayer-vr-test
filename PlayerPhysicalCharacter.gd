@@ -9,6 +9,7 @@ const JUMP_VELOCITY = 4.5
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
+
 var head : Node3D
 var left_controller : Node3D
 var right_controller : Node3D
@@ -38,8 +39,6 @@ func _process(delta : float) -> void:
 	input = Vector2(transformed_input.x, transformed_input.z).limit_length()
 
 func _physics_process(delta : float) -> void:
-	if get_tree().is_queued_for_deletion():
-		return
 	
 	#when headset "rolls", do leaning?
 	
