@@ -56,11 +56,6 @@ func _physics_process(delta : float) -> void:
 		if is_on_floor():
 			velocity.x = input.x * SPEED
 			velocity.z = input.y * SPEED
-			
-			#need a way to replicate jump inputs to server
-			if right_controller is XRController3D:
-				if right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click"):
-					velocity.y = JUMP_VELOCITY
 	
 	move_and_slide()
 	
@@ -68,9 +63,8 @@ func _physics_process(delta : float) -> void:
 	if is_multiplayer_authority():
 		transmit_input_update.rpc_id(1, input)
 		
-		#if jump
-		if right_controller.is_button_pressed("ax_button"):
-			pass
+		if right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click"):
+					velocity.y = JUMP_VELOCITY
 	
 	#only the server has authority to update player positions
 	if get_tree().get_multiplayer().is_server():
