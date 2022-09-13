@@ -127,6 +127,8 @@ func receive_network_update(_position : Vector3, _velocity : Vector3) -> void:
 #runs on server
 @rpc(call_local, authority, reliable)
 func transmit_jump_input() -> void:
+	if !multiplayer.is_server():
+		return
 	#if serve saw player was on ground when jump was pressed
 	if TimeMachine.get_property(self, "is_on_floor", PingService.ping):
 		velocity.y = JUMP_VELOCITY
