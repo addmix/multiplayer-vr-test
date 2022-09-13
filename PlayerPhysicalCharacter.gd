@@ -49,6 +49,14 @@ func _process(delta : float) -> void:
 	input = Vector2(transformed_input.x, transformed_input.z).limit_length()
 
 func _physics_process(delta : float) -> void:
+	#tell server what my input is
+	if is_multiplayer_authority():
+		transmit_input_update.rpc_id(1, input)
+		
+		if (right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click")) and is_on_floor():
+			velocity.y = JUMP_VELOCITY
+			transmit_jump_input.rpc_id(1)
+	
 	
 	#when headset "rolls", do leaning?
 	
@@ -60,8 +68,19 @@ func _physics_process(delta : float) -> void:
 	capsule.position.y = 0.5 * height
 	#prevent standing up when under an obstacle
 	
+	if multiplayer.is_server():
+		#this should be the necessary amount of extrapolation
+		#distance to go forward by
+		var correction : Vector2 = (network_input - input) * SPEED * PingService.get_ping(get_multiplayer_authority())
+		#correct for delta
+		correction = correction / delta
+		print(network_input)
+		input = network_input
+		
+		velocity.x = input.x * SPEED + correction.x
+		velocity.z = input.y * SPEED + correction.y
 	#run physics on both authority and server
-	if is_multiplayer_authority():
+	elif is_multiplayer_authority():
 		#do clientside interpolation/extrapolation here
 		position = lerp(position, network_position, network_interpolation_value)
 		velocity = network_velocity
@@ -69,28 +88,8 @@ func _physics_process(delta : float) -> void:
 		velocity.x = input.x * SPEED
 		velocity.z = input.y * SPEED
 	
-	if multiplayer.is_server():
-		#this should be the necessary amount of extrapolation
-		#distance to go forward by
-		var correction : Vector2 = network_input - input * SPEED * PingService.get_ping(get_multiplayer_authority())
-		#correct for delta
-		correction = correction / delta
-		
-		input = network_input
-		
-		velocity.x = input.x * SPEED + correction.x
-		velocity.z = input.y * SPEED + correction.y
-	
 	if not is_on_floor():
 		velocity.y -= gravity * delta
-	
-	#tell server what my input is
-	if is_multiplayer_authority():
-		transmit_input_update.rpc_id(1, input)
-		
-		if (right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click")) and is_on_floor():
-			velocity.y = JUMP_VELOCITY
-			transmit_jump_input.rpc_id(1)
 	
 	move_and_slide()
 	
