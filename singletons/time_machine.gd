@@ -86,7 +86,7 @@ func get_property(object : Object, property : String, seconds_in_past : float) -
 		if before <= time and after > time:
 			return time_machine_dictionary[after][object][property]
 	
-	var key : int = time_machine_dictionary.keys()[-1]
+	var key : int = time_machine_dictionary.keys()[0]
 	return time_machine_dictionary[key][object][property]
 
 func register_object(object : Object) -> void:
