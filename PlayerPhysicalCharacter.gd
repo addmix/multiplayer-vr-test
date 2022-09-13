@@ -74,7 +74,6 @@ func _physics_process(delta : float) -> void:
 		var correction : Vector2 = (network_input - input) * SPEED * PingService.get_ping(get_multiplayer_authority())
 		#correct for delta
 		correction = correction / delta
-		print(network_input)
 		input = network_input
 		
 		velocity.x = input.x * SPEED + correction.x

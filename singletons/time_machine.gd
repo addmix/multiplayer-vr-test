@@ -62,7 +62,7 @@ func get_interpolated_property(object : Object, property : String, seconds_in_pa
 	return time_machine_dictionary[key][object][property]
 
 #for use with datatypes that can't be interpolated
-func get_property(object : Object, property : String, seconds_in_past : float) -> void:
+func get_property(object : Object, property : String, seconds_in_past : float) -> Variant:
 	#find 2 closest entries
 	var time : int = current_time - int(seconds_in_past * 1000.0)
 	
@@ -83,8 +83,11 @@ func get_property(object : Object, property : String, seconds_in_past : float) -
 		var before : int = time_machine_dictionary.keys()[-index - 1]
 		var after : int = time_machine_dictionary.keys()[-index]
 		
-		if before < time and after > time:
+		if before <= time and after > time:
 			return time_machine_dictionary[after][object][property]
+	
+	var key : int = time_machine_dictionary.keys()[-1]
+	return time_machine_dictionary[key][object][property]
 
 func register_object(object : Object) -> void:
 	time_machine_dictionary[current_time][object] = {}
