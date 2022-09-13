@@ -82,7 +82,11 @@ func _physics_process(delta : float) -> void:
 	#run physics on both authority and server
 	elif is_multiplayer_authority():
 		#do clientside interpolation/extrapolation here
-		position = lerp(position, network_position, network_interpolation_value)
+		#lerp the difference between client position and server position
+		#extrapolation done on server makes the server concurrent with the client, 
+		#but the server's transmitted position still needs to be extrapolated to
+		#account for the server to client latency
+		position = lerp(position, network_position + velocity * PingService.get_ping(get_multiplayer_authority()), network_interpolation_value)
 		velocity = network_velocity
 		
 		velocity.x = input.x * SPEED
