@@ -19,7 +19,9 @@ func deferred() -> void:
 	var config = load_config()
 	
 	if config["host"]:
-		create_server(config["port"])
+		#if you can't create a server, assume it is because one is already running and create client to connect to it
+		if !create_server(config["port"]):
+			create_client(config["ip"], config["port"])
 	else:
 		create_client(config["ip"], config["port"])
 
@@ -27,15 +29,20 @@ func deferred() -> void:
 #initializing server/client
 
 
-func create_server(port : int, max_clients: int = 32, max_channels: int = 0, in_bandwidth: int = 0, out_bandwidth: int = 0) -> void:
+func create_server(port : int, max_clients: int = 32, max_channels: int = 0, in_bandwidth: int = 0, out_bandwidth: int = 0) -> bool:
 	print("Server: Creating server on port: %s" % port)
 	peer = ENetMultiplayerPeer.new()
 	var error : int = peer.create_server(port, max_clients, max_channels, in_bandwidth, out_bandwidth)
+	
+	if error != OK:
+		return false
+	
 	get_tree().get_multiplayer().multiplayer_peer = peer
 	
 	#stuff to ensure local player exists
 	get_multiplayer().connected_to_server.emit()
 	get_tree().get_multiplayer().peer_connected.emit(get_tree().get_multiplayer().get_unique_id())
+	return true
 
 func create_client(address: String, port: int, channel_count: int = 0, in_bandwidth: int = 0, out_bandwidth: int = 0, local_port: int = 0) -> void:
 	print("Client: Creating client on ip: %s and port: %s" % [address, port])

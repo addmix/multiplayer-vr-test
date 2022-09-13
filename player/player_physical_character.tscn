@@ -14,3 +14,9 @@ script = ExtResource("1_koh0l")
 [node name="CollisionShape3d" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_jqaf0")
+
+[node name="ID Label" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0228, 0)
+billboard = 1
+double_sided = false
+text = "sample text"

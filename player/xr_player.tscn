@@ -47,11 +47,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0246735)
 radius = 0.0112186
 material = SubResource("StandardMaterial3D_kf3pf")
 
-[node name="Label3d" type="Label3D" parent="Head"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.424267, 0.403561, -1)
-no_depth_test = true
-text = "awef"
-
 [node name="LeftHand" type="XRController3D" parent="."]
 tracker = &"left_hand"
 script = ExtResource("2_rievg")

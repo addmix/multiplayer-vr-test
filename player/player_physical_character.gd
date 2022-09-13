@@ -28,6 +28,8 @@ func _ready() -> void:
 	right_controller = Player.get_node("RightHand")
 	
 	head.tree_exiting.connect(on_player_deleted)
+	
+	$"ID Label".text = str(get_multiplayer_authority())
 
 var input := Vector2.ZERO
 func _process(delta : float) -> void:
@@ -79,8 +81,8 @@ func _physics_process(delta : float) -> void:
 		
 		velocity.x = input.x * SPEED + correction.x
 		velocity.z = input.y * SPEED + correction.y
-	#run physics on both authority and server
-	elif is_multiplayer_authority():
+	#when not on server, use the server's position and velocity
+	else:
 		#do clientside interpolation/extrapolation here
 		#lerp the difference between client position and server position
 		#extrapolation done on server makes the server concurrent with the client, 
@@ -88,7 +90,8 @@ func _physics_process(delta : float) -> void:
 		#account for the server to client latency
 		position = lerp(position, network_position + velocity * PingService.get_ping(get_multiplayer_authority()), network_interpolation_value)
 		velocity = network_velocity
-		
+	#run physics on both authority and server
+	if is_multiplayer_authority():
 		velocity.x = input.x * SPEED
 		velocity.z = input.y * SPEED
 	
@@ -96,8 +99,6 @@ func _physics_process(delta : float) -> void:
 		velocity.y -= gravity * delta
 	
 	move_and_slide()
-	
-	
 	
 	#only the server has authority to update player positions
 	if multiplayer.is_server():
@@ -134,6 +135,7 @@ func transmit_jump_input() -> void:
 	if !multiplayer.is_server():
 		return
 	#if serve saw player was on ground when jump was pressed
+#	print(TimeMachine.get_property(self, "is_on_floor", PingService.get_ping(get_multiplayer_authority())))
 	if TimeMachine.get_property(self, "is_on_floor", PingService.get_ping(get_multiplayer_authority())):
 		velocity.y = JUMP_VELOCITY
 
