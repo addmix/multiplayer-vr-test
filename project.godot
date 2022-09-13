@@ -60,6 +60,7 @@ config/icon="res://icon.png"
 XRInterfaceSingleton="*res://singletons/xr_interface_singleton.gd"
 MultiplayerSingleton="*res://singletons/multiplayer_singleton.gd"
 PingService="*res://singletons/ping_service.gd"
+TimeMachine="*res://singletons/time_machine.gd"
 
 [layer_names]
 

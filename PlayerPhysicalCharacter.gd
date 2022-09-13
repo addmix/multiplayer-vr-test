@@ -9,7 +9,6 @@ const JUMP_VELOCITY = 4.5
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
-
 var head : Node3D
 var left_controller : Node3D
 var right_controller : Node3D
@@ -42,9 +41,8 @@ func _process(delta : float) -> void:
 
 func _physics_process(delta : float) -> void:
 	
+	
 	#when headset "rolls", do leaning?
-	
-	
 	
 	#visible collision debug option shows wrong shape?
 	#crouching, changing collision shape
@@ -58,11 +56,15 @@ func _physics_process(delta : float) -> void:
 		velocity.y -= gravity * delta
 	
 	#run physics on both authority and server
-	if is_multiplayer_authority() or get_tree().get_multiplayer().is_server():
-		
-		if is_on_floor():
-			velocity.x = input.x * SPEED
-			velocity.z = input.y * SPEED
+	if is_multiplayer_authority():
+		velocity.x = input.x * SPEED
+		velocity.z = input.y * SPEED
+	
+	if multiplayer.is_server():
+		#go back in time (ping) amount
+		#go forward in time (ping) amount using current input
+		velocity.x = input.x * SPEED
+		velocity.z = input.y * SPEED
 	
 	move_and_slide()
 	
@@ -70,20 +72,21 @@ func _physics_process(delta : float) -> void:
 	if is_multiplayer_authority():
 		transmit_input_update.rpc_id(1, input)
 		
-		
 		if right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click") and is_on_floor():
 			velocity.y = JUMP_VELOCITY
 	
 	#only the server has authority to update player positions
-	if get_tree().get_multiplayer().is_server():
+	if multiplayer.is_server():
 		receive_network_update.rpc(position, velocity)
+	
+	create_time_machine_entry()
 
 #can only be called by authority client
 @rpc(call_local, authority, unreliable_ordered, 1)
 func transmit_input_update(_input : Vector2) -> void:
 	#if not server
-	if !get_tree().get_multiplayer().is_server():
-		push_error("Client Error: Unauthorized network input update from peer %s" % get_tree().get_multiplayer().get_remote_sender_id())
+	if !multiplayer.is_server():
+		push_error("Client Error: Unauthorized network input update from peer %s" % multiplayer.get_remote_sender_id())
 		return
 	
 	#prevent client from sending spoofed/replaced input value
@@ -93,8 +96,8 @@ func transmit_input_update(_input : Vector2) -> void:
 @rpc(call_remote, any_peer, unreliable_ordered, 2)
 func receive_network_update(_position : Vector3, _velocity : Vector3) -> void:
 	#push error and return if someone other than the server/host attempts to send a network update to this client
-	if get_tree().get_multiplayer().get_remote_sender_id() != 1:
-		push_error("Client Error: Unauthorized network update from peer %s" % get_tree().get_multiplayer().get_remote_sender_id())
+	if multiplayer.get_remote_sender_id() != 1:
+		push_error("Client Error: Unauthorized network update from peer %s" % multiplayer.get_remote_sender_id())
 		return
 	
 	position = _position
@@ -103,6 +106,10 @@ func receive_network_update(_position : Vector3, _velocity : Vector3) -> void:
 #any_peer authority
 #reliable unreliable unreliable_ordered
 
+func create_time_machine_entry() -> void:
+	TimeMachine.register_object(self)
+	TimeMachine.set_property(self, "position", transform.origin)
+	TimeMachine.set_property(self, "velocity", velocity)
 
 func on_player_deleted() -> void:
 	#for now, just delete physical player
