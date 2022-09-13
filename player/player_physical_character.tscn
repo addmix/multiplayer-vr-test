@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c7qeq3xvlx5rm"]
 
-[ext_resource type="Script" path="res://PlayerPhysicalCharacter.gd" id="1_3xyok"]
+[ext_resource type="Script" path="res://player/player_physical_character.gd" id="1_koh0l"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jqaf0"]
 resource_local_to_scene = true
@@ -9,7 +9,7 @@ height = 1.8
 
 [node name="PlayerPhysicalCharacter" type="CharacterBody3D"]
 collision_layer = 2
-script = ExtResource("1_3xyok")
+script = ExtResource("1_koh0l")
 
 [node name="CollisionShape3d" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)

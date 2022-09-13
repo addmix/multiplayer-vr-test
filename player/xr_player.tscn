@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=3 uid="uid://8wh3p3rhqhoc"]
 
-[ext_resource type="Script" path="res://ControllerLeft.gd" id="1_5jhu5"]
-[ext_resource type="Script" path="res://XRPlayer.gd" id="1_kuklh"]
+[ext_resource type="Script" path="res://player/xr_player.gd" id="1_jquy2"]
 [ext_resource type="PackedScene" uid="uid://c8rneh2x0n240" path="res://classes/xr_controller_function_interact/xr_controller_function_grab/xr_controller_function_grab.tscn" id="2_llc4j"]
+[ext_resource type="Script" path="res://player/controller_left.gd" id="2_rievg"]
 [ext_resource type="PackedScene" uid="uid://sqvn74ejr6uy" path="res://classes/xr_controller_function_interact/xr_controller_function_press.tscn" id="3_jv51j"]
-[ext_resource type="Script" path="res://ControllerRight.gd" id="5_h4bbg"]
+[ext_resource type="Script" path="res://player/controller_right.gd" id="5_mqq66"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uecxx"]
 transparency = 2
@@ -16,7 +16,7 @@ albedo_color = Color(0.709804, 0.623529, 0.533333, 1)
 albedo_color = Color(0.00784314, 0.00784314, 0.00784314, 1)
 
 [node name="XRPlayer" type="XROrigin3D"]
-script = ExtResource("1_kuklh")
+script = ExtResource("1_jquy2")
 
 [node name="Head" type="XRCamera3D" parent="."]
 fov = 90.0
@@ -47,10 +47,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0246735)
 radius = 0.0112186
 material = SubResource("StandardMaterial3D_kf3pf")
 
+[node name="Label3d" type="Label3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.424267, 0.403561, -1)
+no_depth_test = true
+text = "awef"
+
 [node name="LeftHand" type="XRController3D" parent="."]
 tracker = &"left_hand"
-script = ExtResource("1_5jhu5")
-tracker_name = &"/user/hand/left"
+script = ExtResource("2_rievg")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="LeftHand"]
 size = Vector3(0.05, 0.05, 0.1)
@@ -61,8 +65,7 @@ size = Vector3(0.05, 0.05, 0.1)
 
 [node name="RightHand" type="XRController3D" parent="."]
 tracker = &"right_hand"
-script = ExtResource("5_h4bbg")
-tracker_name = &"/user/hand/right"
+script = ExtResource("5_mqq66")
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="RightHand"]
 size = Vector3(0.05, 0.05, 0.1)

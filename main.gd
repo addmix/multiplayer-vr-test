@@ -2,9 +2,9 @@ extends Node3D
 
 var player_refs : Dictionary = {}
 
-var kinematic_body = preload("res://player_physical_character.tscn")
-var character = preload("res://XRPlayer.tscn")
-var puppet = preload("res://XRPuppet.tscn")
+var kinematic_body = preload("res://player/player_physical_character.tscn")
+var character = preload("res://player/xr_player.tscn")
+var puppet = preload("res://player/xr_puppet.tscn")
 
 func _ready() -> void:
 	get_tree().get_multiplayer().peer_connected.connect(on_peer_connected)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dadofkphd36ic"]
 
-[ext_resource type="Script" path="res://XRPuppet.gd" id="1_ulnsf"]
+[ext_resource type="Script" path="res://player/xr_puppet.gd" id="1_pt5ar"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1dnwn"]
 transparency = 2
@@ -12,7 +12,7 @@ albedo_color = Color(0.709804, 0.623529, 0.533333, 1)
 albedo_color = Color(0.00784314, 0.00784314, 0.00784314, 1)
 
 [node name="XRPuppet" type="Node3D"]
-script = ExtResource("1_ulnsf")
+script = ExtResource("1_pt5ar")
 
 [node name="Head" type="Node3D" parent="."]
 
