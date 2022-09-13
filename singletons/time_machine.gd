@@ -58,7 +58,8 @@ func get_interpolated_property(object : Object, property : String, seconds_in_pa
 			
 			return lerp(before_value, after_value, interpolation_factor)
 	
-	var key : int = time_machine_dictionary.keys()[-1]
+	#default to the second to most recent frame
+	var key : int = time_machine_dictionary.keys()[-2]
 	return time_machine_dictionary[key][object][property]
 
 #for use with datatypes that can't be interpolated
@@ -78,15 +79,16 @@ func get_property(object : Object, property : String, seconds_in_past : float) -
 		return time_machine_dictionary[key][object][property]
 	
 	#will go from newest/largest to oldest/smallest
-	#default to the lesser of the two values
 	for index in time_machine_dictionary.keys().size():
 		var before : int = time_machine_dictionary.keys()[-index - 1]
 		var after : int = time_machine_dictionary.keys()[-index]
 		
 		if before <= time and after > time:
+#			print("time: %s, before: %s, after: %s" % [time, before, after])
 			return time_machine_dictionary[after][object][property]
 	
-	var key : int = time_machine_dictionary.keys()[0]
+	#default to the second to most recent frame
+	var key : int = time_machine_dictionary.keys()[-2]
 	return time_machine_dictionary[key][object][property]
 
 func register_object(object : Object) -> void:

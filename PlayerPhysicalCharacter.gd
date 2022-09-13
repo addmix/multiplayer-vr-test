@@ -130,7 +130,7 @@ func transmit_jump_input() -> void:
 	if !multiplayer.is_server():
 		return
 	#if serve saw player was on ground when jump was pressed
-	if TimeMachine.get_property(self, "is_on_floor", PingService.ping):
+	if TimeMachine.get_property(self, "is_on_floor", PingService.get_ping(get_multiplayer_authority())):
 		velocity.y = JUMP_VELOCITY
 
 
