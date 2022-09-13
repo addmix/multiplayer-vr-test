@@ -7,6 +7,9 @@ var ping : float = 0.0
 #{int player_id : float ping}
 var ping_dictionary : Dictionary = {}
 
+func _ready() -> void:
+	get_tree().get_multiplayer().peer_connected.connect(on_peer_connected)
+
 func _physics_process(delta : float) -> void:
 	if !multiplayer.has_multiplayer_peer() or !multiplayer.is_server():
 		return
@@ -45,3 +48,6 @@ func receive_ping_dictionary(ping_dictionary : Dictionary) -> void:
 
 func get_ping(id : int) -> float:
 	return ping_dictionary[id]
+
+func on_peer_connected(id : int) -> void:
+	ping_dictionary[id] = 0.0

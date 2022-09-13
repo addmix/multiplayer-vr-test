@@ -13,6 +13,7 @@ var head : Node3D
 var left_controller : Node3D
 var right_controller : Node3D
 
+var network_input := Vector2.ZERO
 var network_position := Vector3.ZERO
 var network_velocity := Vector3.ZERO
 var network_interpolation_value : float = 0.7
@@ -71,9 +72,11 @@ func _physics_process(delta : float) -> void:
 	if multiplayer.is_server():
 		#this should be the necessary amount of extrapolation
 		#distance to go forward by
-		var correction : Vector2 = input * SPEED * PingService.get_ping(get_multiplayer_authority())
+		var correction : Vector2 = network_input - input * SPEED * PingService.get_ping(get_multiplayer_authority())
 		#correct for delta
 		correction = correction / delta
+		
+		input = network_input
 		
 		velocity.x = input.x * SPEED + correction.x
 		velocity.z = input.y * SPEED + correction.y
@@ -109,7 +112,7 @@ func transmit_input_update(_input : Vector2) -> void:
 		return
 	
 	#prevent client from sending spoofed/replaced input value
-	input = _input.limit_length()
+	network_input = _input.limit_length()
 
 #can only be called by server
 @rpc(call_local, any_peer, unreliable_ordered, 2)
