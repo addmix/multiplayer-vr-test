@@ -16,9 +16,9 @@ var right_controller : Node3D
 var network_input := Vector2.ZERO
 var network_position := Vector3.ZERO
 var network_velocity := Vector3.ZERO
-var network_interpolation_value : float = 0.7
+@export var network_interpolation_value : float = 0.7
 #how many seconds to interpolate from network values to client side values
-var network_interpolation_duration : float = 0.1
+@export var network_interpolation_duration : float = 0.1
 
 var jump_requested : bool = false
 
@@ -53,9 +53,10 @@ func _physics_process(delta : float) -> void:
 	if is_multiplayer_authority():
 		transmit_input_update.rpc_id(1, input)
 		
-		if (right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click")) and is_on_floor():
-			velocity.y = JUMP_VELOCITY
+		if (right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click")):
 			transmit_jump_input.rpc_id(1)
+			if is_on_floor():
+				velocity.y = JUMP_VELOCITY
 	
 	
 	#when headset "rolls", do leaning?
@@ -73,7 +74,7 @@ func _physics_process(delta : float) -> void:
 		#distance to go forward by
 		var correction : Vector2 = (network_input - input) * SPEED * PingService.get_ping(get_multiplayer_authority())
 		#correct for delta
-		correction = correction / delta
+		correction = correction# / delta
 		input = network_input
 		
 		velocity.x = input.x * SPEED + correction.x
@@ -97,7 +98,7 @@ func _physics_process(delta : float) -> void:
 	#only the server has authority to update player positions
 	if multiplayer.is_server():
 		#give client updated position and velocity
-		receive_network_update.rpc(position, velocity)
+		receive_network_update.rpc(position + velocity * PingService.get_ping(get_multiplayer_authority()), velocity)
 	
 	create_time_machine_entry()
 
