@@ -5,6 +5,8 @@ var max_time_machine_entries : int = 30
 
 #might be slight issues with interpolations near recently (less than ping) spawned/destroyed objects
 
+#best use case is for hitreg to match to the gamestate of what the client sees (ping amount of time in the past)
+
 #first object in array (0) is oldest value
 #last object in array is newest
 var time_machine_dictionary : Dictionary = {

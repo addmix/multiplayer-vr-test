@@ -13,6 +13,14 @@ var head : Node3D
 var left_controller : Node3D
 var right_controller : Node3D
 
+var network_position := Vector3.ZERO
+var network_velocity := Vector3.ZERO
+var network_interpolation_value : float = 0.7
+#how many seconds to interpolate from network values to client side values
+var network_interpolation_duration : float = 0.1
+
+var jump_requested : bool = false
+
 func _ready() -> void:
 	head = Player.get_node("Head")
 	left_controller = Player.get_node("LeftHand")
@@ -41,7 +49,6 @@ func _process(delta : float) -> void:
 
 func _physics_process(delta : float) -> void:
 	
-	
 	#when headset "rolls", do leaning?
 	
 	#visible collision debug option shows wrong shape?
@@ -52,31 +59,43 @@ func _physics_process(delta : float) -> void:
 	capsule.position.y = 0.5 * height
 	#prevent standing up when under an obstacle
 	
-	if not is_on_floor():
-		velocity.y -= gravity * delta
-	
 	#run physics on both authority and server
 	if is_multiplayer_authority():
+		#do clientside interpolation/extrapolation here
+		position = lerp(position, network_position, network_interpolation_value)
+		velocity = network_velocity
+		
 		velocity.x = input.x * SPEED
 		velocity.z = input.y * SPEED
 	
 	if multiplayer.is_server():
-		#go back in time (ping) amount
-		#go forward in time (ping) amount using current input
-		velocity.x = input.x * SPEED
-		velocity.z = input.y * SPEED
+		#this should be the necessary amount of extrapolation
+		#distance to go forward by
+		var correction : Vector2 = input * SPEED * PingService.get_ping(get_multiplayer_authority())
+		#correct for delta
+		correction = correction / delta
+		
+		velocity.x = input.x * SPEED + correction.x
+		velocity.z = input.y * SPEED + correction.y
 	
-	move_and_slide()
+	if not is_on_floor():
+		velocity.y -= gravity * delta
 	
 	#tell server what my input is
 	if is_multiplayer_authority():
 		transmit_input_update.rpc_id(1, input)
 		
-		if right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click") and is_on_floor():
+		if (right_controller.is_button_pressed("ax_button") or right_controller.is_button_pressed("primary_click")) and is_on_floor():
 			velocity.y = JUMP_VELOCITY
+			transmit_jump_input.rpc_id(1)
+	
+	move_and_slide()
+	
+	
 	
 	#only the server has authority to update player positions
 	if multiplayer.is_server():
+		#give client updated position and velocity
 		receive_network_update.rpc(position, velocity)
 	
 	create_time_machine_entry()
@@ -93,23 +112,29 @@ func transmit_input_update(_input : Vector2) -> void:
 	input = _input.limit_length()
 
 #can only be called by server
-@rpc(call_remote, any_peer, unreliable_ordered, 2)
+@rpc(call_local, any_peer, unreliable_ordered, 2)
 func receive_network_update(_position : Vector3, _velocity : Vector3) -> void:
 	#push error and return if someone other than the server/host attempts to send a network update to this client
 	if multiplayer.get_remote_sender_id() != 1:
 		push_error("Client Error: Unauthorized network update from peer %s" % multiplayer.get_remote_sender_id())
 		return
 	
-	position = _position
-	velocity = _velocity
-#call_local call_remote
-#any_peer authority
-#reliable unreliable unreliable_ordered
+	network_position = _position
+	network_velocity = _velocity
+
+#runs on server
+@rpc(call_local, authority, reliable)
+func transmit_jump_input() -> void:
+	#if serve saw player was on ground when jump was pressed
+	if TimeMachine.get_property(self, "is_on_floor", PingService.ping):
+		velocity.y = JUMP_VELOCITY
+
 
 func create_time_machine_entry() -> void:
 	TimeMachine.register_object(self)
 	TimeMachine.set_property(self, "position", transform.origin)
 	TimeMachine.set_property(self, "velocity", velocity)
+	TimeMachine.set_property(self, "is_on_floor", is_on_floor())
 
 func on_player_deleted() -> void:
 	#for now, just delete physical player
